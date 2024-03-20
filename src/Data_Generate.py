@@ -1,14 +1,14 @@
 import csv
 import random
-import Global_Parameter
+import Global_Parameter as GP
 
-RANDOM_SEED = Global_Parameter.RANDOM_SEED
-RANDOM_N_L = Global_Parameter.RANDOM_N_L  # 客户点数量
-RANDOM_N_R = Global_Parameter.RANDOM_N_R
-RANDOM_ORGAN_L = Global_Parameter.RANDOM_ORGAN_L  # 器官需求数量
-RANDOM_ORGAN_R = Global_Parameter.RANDOM_ORGAN_R
-RANDOM_DIS_L = Global_Parameter.RANDOM_DIS_L
-RANDOM_DIS_R = Global_Parameter.RANDOM_DIS_R
+RANDOM_SEED = GP.RANDOM_SEED
+RANDOM_N_L = GP.RANDOM_N_L  # 客户点数量
+RANDOM_N_R = GP.RANDOM_N_R
+RANDOM_ORGAN_L = GP.RANDOM_ORGAN_L  # 器官需求数量
+RANDOM_ORGAN_R = GP.RANDOM_ORGAN_R
+RANDOM_DIS_L = GP.RANDOM_DIS_L
+RANDOM_DIS_R = GP.RANDOM_DIS_R
 
 
 def data_generate(k):

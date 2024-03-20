@@ -36,7 +36,7 @@ def get_charge_node(f,dis,charge):
         # print("charge",[get_binary(x) for x in charge_node])
     return charge_node
 
-def Remove_dup(charge_node):
+def remove_dup(charge_node):
     del_node = []
     L = len(charge_node)
     for i in range(L):
@@ -61,7 +61,7 @@ Max = 300
 # print(get_binary(4))
 # print( 4 | (1 << 3))
 charge = get_charge_node(f,dis,charge)
-charge = Remove_dup(charge)
+charge = remove_dup(charge)
 charge_node = [get_binary(x) for x in charge]
 print(charge_node)
 

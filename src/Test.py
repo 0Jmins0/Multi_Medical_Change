@@ -1,7 +1,7 @@
 import random
 
 from LNS import LNS
-from Read_Data import Read_Data
+from Read_Data import read_data
 
 
 def main(instace):
@@ -10,5 +10,5 @@ def main(instace):
 
 def evaluate(a,k):
     random.seed(k)
-    instance = Read_Data(a)
+    instance = read_data(a)
     main(instance)

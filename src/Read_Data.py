@@ -1,6 +1,6 @@
 import csv
 
-def Read_Data(p):
+def read_data(p):
     other = '../data/data' + str(p) + '.csv'
     instance = {}
     csv_data = []
@@ -14,4 +14,4 @@ def Read_Data(p):
         instance['discharge'] = csv_data[n+1:]  # Extract discharge data
     return instance
 
-print(Read_Data(0))
+print(read_data(0))
