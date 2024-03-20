@@ -1,0 +1,2 @@
+def LNS(instance):
+    pass
