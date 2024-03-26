@@ -11,7 +11,7 @@ def read_data(p):
         n = int(csv_data[0][0])
         instance['n'] = n
         instance['need'] = csv_data[1:n+1]  # Extract need data
-        instance['discharge'] = csv_data[n+1:]  # Extract discharge data
+        instance['distence'] = csv_data[n+1:]  # Extract discharge data
     return instance
 
 print(read_data(0))
