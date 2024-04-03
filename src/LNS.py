@@ -26,14 +26,22 @@ def remove_random(cur_sol, instance):
     tmp_sol = FC.remove_bank(bank,cur_sol)
     return bank,tmp_sol
 
-# def insert_random(bank,cur_sol, instance):
-#     try:
-#         bank_copy = copy.deepcopy(bank)
-#         for node in bank_copy:
-#             route = random.sample(cur_sol, 1)
-#             pos = random.randint(1,len(route)-1)
-#     except Exception as e:
-#         print(f"From Random_Ins get an error: {e}")
+def insert_random(bank,cur_sol, instance):
+    try:
+        bank_copy = copy.deepcopy(bank)
+        for node in bank_copy:
+            route_id= random.randint(len(cur_sol))
+            pos ,cost = FC.insert_node_to_route(node,cur_sol[route_id],instance)
+            if(pos == -1):
+                new_route =[]
+                new_route.extend([0,node,instance['n'][0] + 1])
+                cur_sol.append(new_route)
+            else cur_sol[route_id].insert(node,pos)
+        return cur_sol
+
+
+    except Exception as e:
+        print(f"From Random_Ins get an error: {e}")
 
 
 def distroy_and_repair(current_sol, removal_id, insert_id, instance):
