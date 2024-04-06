@@ -36,7 +36,8 @@ def insert_random(bank,cur_sol, instance):
                 new_route =[]
                 new_route.extend([0,node,instance['n'][0] + 1])
                 cur_sol.append(new_route)
-            else cur_sol[route_id].insert(node,pos)
+            else:
+                cur_sol[route_id].insert(node,pos)
         return cur_sol
 
 
