@@ -120,6 +120,48 @@ def opt2_exchange_mul(sol, instance):
     return pre_sol
 
 
+# 选择路径1的节点A，将A从路径1中删除，并将A插入到路径2的合适位置。
+def relocate_operator(sol, instance):
+    num_of_routes = len(sol)
+    if num_of_routes < 2:
+        return sol
+
+    for index1 in range(num_of_routes):
+        for index2 in range(index1, num_of_routes):
+            # 选择两个路线
+            route1 = copy.deepcopy(sol[index1])
+            route2 = copy.deepcopy(sol[index2])
+
+            # 如果某个路径的长度小于3，则无法进行重新定位
+            if len(route1) < 4 or len(route2) < 3:
+                continue
+
+            cost = FC.get_route_cost(route1, instance) + FC.get_route_cost(route2, instance)
+
+            # 选择一个节点并将其从一个路径中移除，插入到另一路径中的比较好的位置
+            for node_index in range(1, len(route1) - 1):
+                Min_pos, Min_cost = FC.insert_node_to_route(route1[node_index], route2, instance)
+                tmp_r1 = copy.deepcopy(route1)
+                tmp_r2 = copy.deepcopy(route2)
+                relocated_node = tmp_r1.pop(node_index)
+                tmp_r2.insert(Min_pos, relocated_node)
+                if FC.check_route(tmp_r1, instance) == False or FC.check_route(tmp_r2, instance) == False:
+                    continue
+
+                # 计算重新定位后的成本
+                cost_new = FC.get_route_cost(tmp_r1, instance) + FC.get_route_cost(tmp_r2, instance)
+
+                # 如果成本降低，则接受新解，立即返回
+                if cost > cost_new:
+                    sol[index1] = tmp_r1
+                    sol[index2] = tmp_r2
+                    return sol
+    return sol
+
+
+
+
+
 def LS_OP(sol, instance, op_id):
     operator = LOCAL_OPERATOR_POOL[op_id]
     if operator == 1:
