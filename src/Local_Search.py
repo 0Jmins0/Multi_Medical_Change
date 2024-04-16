@@ -159,8 +159,36 @@ def relocate_operator(sol, instance):
     return sol
 
 
+#选择路径1的节点A和路径2的节点B，交换它们，将A放到路径2，将B放到路径1。
+def exchange_operator(sol, instance):
+    num_of_route = len(sol)
 
+    if num_of_route < 2:
+        return sol
 
+    for index1 in range(num_of_route):
+        for index2 in range(index1 + 1, num_of_route):
+            route1 = copy.deepcopy(sol[index1])
+            route2 = copy.deepcopy(sol[index2])
+
+            cost = FC.get_route_cost(route1, instance) + FC.get_route_cost(route2, instance)
+
+            if len(route1) < 3 or len(route2) < 3:
+                continue
+            for node_index1 in range(1, len(route1) - 1):
+                for node_index2 in range(1, len(route2) - 1):
+                    tmp_r1 = copy.deepcopy(route1)
+                    tmp_r2 = copy.deepcopy(route2)
+                    tmp_r1[node_index1], tmp_r2[node_index2] = tmp_r2[node_index2], tmp_r1[node_index1]
+
+                    if FC.check_route(tmp_r1, instance) == False or FC.check_route(tmp_r2, instance) == False:
+                        continue
+
+                    cost_new = FC.get_route_cost(tmp_r1, instance) + FC.get_route_cost(tmp_r2, instance)
+                    if cost_new < cost:
+                        sol[index1], sol[index2] = tmp_r1, tmp_r2
+                        return sol
+    return sol
 
 def LS_OP(sol, instance, op_id):
     operator = LOCAL_OPERATOR_POOL[op_id]
