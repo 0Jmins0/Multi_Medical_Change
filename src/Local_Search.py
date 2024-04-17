@@ -159,7 +159,7 @@ def relocate_operator(sol, instance):
     return sol
 
 
-#选择路径1的节点A和路径2的节点B，交换它们，将A放到路径2，将B放到路径1。
+# 选择路径1的节点A和路径2的节点B，交换它们，将A放到路径2，将B放到路径1。
 def exchange_operator(sol, instance):
     num_of_route = len(sol)
 
@@ -188,6 +188,52 @@ def exchange_operator(sol, instance):
                     if cost_new < cost:
                         sol[index1], sol[index2] = tmp_r1, tmp_r2
                         return sol
+    return sol
+
+# 选择路径1的连续两个节点，和路径2的连续两个节点，并交换
+def cross_exchange_operator(sol, instance):
+    num_of_route = len(sol)
+    if num_of_route < 2:
+        return sol
+
+    for path_index1 in range(num_of_route):
+        for path_index2 in range(path_index1 + 1, num_of_route):
+            route1 = copy.deepcopy(sol[path_index1])
+            route2 = copy.deepcopy(sol[path_index2])
+
+            cost = FC.get_route_cost(route1, instance) + FC.get_route_cost(route2, instance)
+
+            if len(route1) < 5 or len(route2) < 5:
+                continue
+            for node_index1 in range(1, len(route1) - 2):
+                node_index2 = node_index1 + 1
+                # 获取第一个子序列
+                segment1 = route1[node_index1:node_index2 + 1]
+                # 随机选择该路径上的两个连续的节点，构成另一个路径的子序列
+                for node_index3 in range(1, len(route2) - 2):
+                    node_index4 = node_index3 + 1
+                    # 获取第二个子序列
+                    segment2 = route2[node_index3:node_index4 + 1]
+
+                    tmp1 = copy.deepcopy(route1)
+                    tmp2 = copy.deepcopy(route2)
+
+                    # 将第二个子序列放到第一个子序列的位置
+                    tmp1[node_index1:node_index2 + 1] = segment2
+                    # 将第一个子序列放到第二个子序列的位置
+                    tmp2[node_index3:node_index4 + 1] = segment1
+
+
+                    if FC.check_route(tmp1, instance) == False or FC.check_route(tmp2, instance) == False:
+                        continue
+
+                    cost_new = FC.get_route_cost(tmp1, instance) + FC.get_route_cost(tmp2, instance)
+
+                    if cost > cost_new:
+                        sol[path_index1] = tmp1
+                        sol[path_index2] = tmp2
+                        return sol
+
     return sol
 
 def LS_OP(sol, instance, op_id):
