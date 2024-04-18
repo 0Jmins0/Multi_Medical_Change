@@ -77,7 +77,7 @@ def get_init_sol(instance):
 
 
 def remove_bank(bank, sol):
-    return [[elem for elem in row if elem not in bank] for row in sol]
+    return [route for route in [[elem for elem in row if elem not in bank] for row in sol] if len(route) > 2]
 
 
 # 将列表中两坐标之间的元素翻转

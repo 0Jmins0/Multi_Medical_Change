@@ -250,7 +250,18 @@ def LS_OP(sol, instance, op_id):
         new_sol = opt2_exchange_mul(sol, instance)
         new_cost = FC.get_sol_cost(new_sol, instance)
         return new_sol, new_cost
-
+    elif operator == 4:
+        new_sol = relocate_operator(sol, instance)
+        new_cost = FC.get_sol_cost(new_sol, instance)
+        return new_sol, new_cost
+    elif operator == 5:
+        new_sol = exchange_operator(sol, instance)
+        new_cost = FC.get_sol_cost(new_sol, instance)
+        return new_sol, new_cost
+    elif operator == 6:
+        new_sol = cross_exchange_operator(sol, instance)
+        new_cost = FC.get_sol_cost(new_sol, instance)
+        return new_sol, new_cost
 
 def LS(new_sol, instance):
     op_id = 0

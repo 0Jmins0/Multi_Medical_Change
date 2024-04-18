@@ -18,26 +18,46 @@ T0 = 187
 q = 0.88
 
 
+# 随机删除
 def remove_random(cur_sol, instance):
     bank = []
     tmp_sol = []
     n = instance['n']
-    bank = random.sample(range(1,n + 1), min(NonImp,n))
-    tmp_sol = FC.remove_bank(bank,cur_sol)
-    return bank,tmp_sol
+    bank = random.sample(range(1, n + 1), min(NonImp, n))
+    tmp_sol = FC.remove_bank(bank, cur_sol)
+    return bank, tmp_sol
 
-def insert_random(bank,cur_sol, instance):
+
+# 移除后，距离变化最大的点集
+def remove_distance(cur_sol, instance):
+    Dis_list = []
+    for route in cur_sol:
+        for i in range(1, len(route) - 1):
+            # 删除点i后，距离的变化
+            change = (instance['distance'][route[i - 1]][route[i + 1]] -
+                      instance['distance'][route[i - 1]][route[i]] -
+                      instance['distance'][route[i]][route[i + 1]])
+            Dis_list.append([change, route[i]])
+
+    Dis_list = sorted(Dis_list, key=lambda x: x[0], reverse=True)
+    n = instance['n']
+    bank = [row[1] for row in random.sample(Dis_list, min(NonImp, n))]
+    tmp_sol = FC.remove_bank(bank, cur_sol)
+    return bank, tmp_sol
+
+
+def insert_random(bank, cur_sol, instance):
     try:
         bank_copy = copy.deepcopy(bank)
         for node in bank_copy:
-            route_id= random.randint(len(cur_sol))
-            pos ,cost = FC.insert_node_to_route(node,cur_sol[route_id],instance)
-            if(pos == -1):
-                new_route =[]
-                new_route.extend([0,node,instance['n'][0] + 1])
+            route_id = random.randint(len(cur_sol))
+            pos, cost = FC.insert_node_to_route(node, cur_sol[route_id], instance)
+            if (pos == -1):
+                new_route = []
+                new_route.extend([0, node, instance['n'][0] + 1])
                 cur_sol.append(new_route)
             else:
-                cur_sol[route_id].insert(node,pos)
+                cur_sol[route_id].insert(node, pos)
         return cur_sol
 
 
