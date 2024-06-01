@@ -2,12 +2,12 @@ import copy
 import math
 import random
 
-import Global_Parameter
+import Global_Parameter as GP
 from Local_Search import LS
 import Function as FC
 
-REMOVE_POOL = Global_Parameter.REMOVE_POOL
-INSERT_POOL = Global_Parameter.INSERT_POOL
+REMOVE_POOL = GP.REMOVE_POOL
+INSERT_POOL = GP.INSERT_POOL
 
 MaxI = 100  # 最大迭代次数
 Terminal = 0  # 迭代次数
@@ -41,8 +41,41 @@ def remove_distance(cur_sol, instance):
 
     Dis_list = sorted(Dis_list, key=lambda x: x[0], reverse=True)
     n = instance['n']
-    bank = [row[1] for row in random.sample(Dis_list, min(NonImp, n))]
+    bank = [row[1] for row in Dis_list[:min(NonImp, n)]]
     tmp_sol = FC.remove_bank(bank, cur_sol)
+    return bank, tmp_sol
+
+
+# 每一条路线 随机删除一段路线
+def remove_string(cur_sol, instance):
+    bank = []
+    for sol in cur_sol:
+        Len = len(sol) - 2
+        Max_del = min(NonImp, Len)
+        Del_len = random.randint(Max_del, Len)  # [Max_del,Len]
+        start = random.randint(1, Len - Del_len)  # [1,Len - Del_len + 1]
+        end = start + Del_len
+
+        bank.extend(sol[start:end])
+
+    new_sol = FC.remove_bank(bank,cur_sol)
+    return bank, new_sol
+
+
+def remove_worst(cur_sol, instance):
+    cost_list = []
+    for route in cur_sol:
+        for i in range(1, len(route) - 1):
+            change = (instance['distance'][route[i - 1]][route[i + 1]] -
+                      instance['distance'][route[i - 1]][route[i]] -
+                      instance['distance'][route[i]][route[i + 1]]) * GP.DIS_TO_COST
+            if len(route) == 3:
+                change += GP.COST_OF_DELIVERY
+            cost_list.append([change, route[i]])
+    cost_list = sorted(cost_list, key = lambda x: x[0], reverse=True)
+    n = instance['n']
+    bank = [row[1] for row in cost_list[:min(NonImp, n)]]
+    tmp_sol = FC.remove_bank(bank,cur_sol)
     return bank, tmp_sol
 
 
@@ -63,6 +96,14 @@ def insert_random(bank, cur_sol, instance):
 
     except Exception as e:
         print(f"From Random_Ins get an error: {e}")
+
+#  贪心的插入每一个点
+def insert_greedy(bank, cur_sol, instance):
+    pass
+
+#  顺序的插入每一个点
+def insert_sequential(bank, cur_sol, instance):
+    pass
 
 
 def distroy_and_repair(current_sol, removal_id, insert_id, instance):
