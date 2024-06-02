@@ -99,11 +99,37 @@ def insert_random(bank, cur_sol, instance):
 
 #  贪心的插入每一个点
 def insert_greedy(bank, cur_sol, instance):
-    pass
+    for node in bank:
+        Min_pos = -1
+        Min_cost = 99999999
+        Min_route_id = -1
+        for route_id, route in enumerate(cur_sol):
+            tmp_pos, tmp_cost = FC.insert_node_to_route(node, route, instance)
+            if tmp_cost < Min_cost:
+                Min_cost = tmp_cost
+                Min_route_id = route_id
+                Min_pos = tmp_pos
+        if Min_pos == -1:
+            cur_sol.append([0, node, instance['n'][0] + 1])
+        else:
+            cur_sol[Min_route_id].insert(node, Min_pos)
+
+    return cur_sol
+
 
 #  顺序的插入每一个点
 def insert_sequential(bank, cur_sol, instance):
-    pass
+    for node in bank:
+        ok = 0
+        for route_pos in range(0, len(cur_sol)):
+            Min_pos, Min_cost = FC.insert_node_to_route(node, cur_sol[route_pos], instance)
+            if(Min_pos != -1):
+                cur_sol[route_pos].insert(node, Min_pos)
+                ok = 1
+                break
+        if ok == 0:
+            cur_sol.append([0, node, instance['n'][0] + 1])
+    return cur_sol
 
 
 def distroy_and_repair(current_sol, removal_id, insert_id, instance):
@@ -114,11 +140,23 @@ def distroy_and_repair(current_sol, removal_id, insert_id, instance):
 
         # Removel
         if removal_id == 1:
-            pass
+            bank, new_sol = remove_random(current_sol, instance)
+        if removal_id == 2:
+            bank, new_sol = remove_distance(current_sol, instance)
+        if removal_id == 3:
+            bank, new_sol = remove_string(current_sol, instance)
+        if removal_id == 4:
+            bank, new_sol = remove_worst(current_sol, instance)
 
         # Insert
         if insert_id == 1:
-            pass
+            new_sol = insert_random(bank, new_sol, instance)
+        if insert_id == 2:
+            new_sol = insert_greedy(bank, new_sol, instance)
+        if insert_id == 3:
+            new_sol = insert_sequential(bank, new_sol, instance)
+
+        new_cost = FC.get_sol_cost(new_sol, instance)
 
         return new_sol, new_cost
     except Exception as e:
