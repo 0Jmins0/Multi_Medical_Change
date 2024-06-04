@@ -6,6 +6,7 @@ def read_txt_to_dict(file_name):
         type = ''
         distance = []
         need = []
+        need.append(0)
         for line in lines:
             line = line.strip()
             if(len(line) > 0):
@@ -28,11 +29,14 @@ def read_txt_to_dict(file_name):
                         distance.append(parts)
                     if(type == 'node'):
                         need.append(parts[1])
+                        # print(parts[1])
 
 
 
         instance = {}
-        instance['n'] = len(distance)
+        instance['n'] = len(need) - 1
+        need.append(need[0])
+        distance.append(distance[0])
         instance['need'] = need
         instance['distance'] = distance
 
@@ -46,3 +50,4 @@ def read_txt_to_dict(file_name):
 # 假设文件路径是 'your_file.txt'
 file_path = '../hk_data_exmple/101-29.txt'
 data = read_txt_to_dict(file_path)
+# print(len(data['need']),len(data['distance']))

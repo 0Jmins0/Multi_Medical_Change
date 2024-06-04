@@ -7,6 +7,7 @@ from hk_data_read import read_txt_to_dict
 
 def main(instace):
     sol = LNS(instace)
+    print(sol)
 
 
 def evaluate(a,k):

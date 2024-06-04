@@ -21,7 +21,7 @@ def get_route_cost(route, instance):
     for i in range(1, len(route)):
         dis += instance['distance'][i - 1][i]
     route_charge = dis * DIS_TO_CONSUME_OF_DELIVERY
-    route_cost = route * CHARGE_TO_COST
+    route_cost = route_charge * CHARGE_TO_COST
     return route_cost
 
 
@@ -40,8 +40,9 @@ def insert_node_to_route(node, route, instance):
         return -1, -1
     Min_cost = 99999999
     Min_pos = -1
-    orgion_cost = get_route_cost(route)
-    for i in range(1, n + 2):  # 可以插入到第 1 个点前到第 n + 1 个点前
+    orgion_cost = get_route_cost(route, instance)
+
+    for i in range(1, len(route) - 2):  # 可以插入到第 1 个点前到第 n + 1 个点前
         new_cost = orgion_cost - instance['distance'][route[i - 1]][route[i]] + \
                    instance['distance'][route[i - 1]][node] + \
                    instance['distance'][node][route[i]]
@@ -55,7 +56,7 @@ def insert_node_to_route(node, route, instance):
 
 def get_init_sol(instance):
     new_sol = []
-    n = instance['n'][0]
+    n = instance['n']
     for i in range(1, n + 1):  # 遍历客户点1-n
         pos = -1
         cost = 9999999
@@ -73,7 +74,7 @@ def get_init_sol(instance):
         else:
             new_sol[route_index].insert(pos, i)
 
-    return new_sol
+    return new_sol, get_sol_cost(new_sol, instance)
 
 
 def remove_bank(bank, sol):
