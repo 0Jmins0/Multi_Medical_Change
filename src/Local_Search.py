@@ -15,7 +15,8 @@ def opt2_exchange(sol, instance):
     for idx in range(num_of_route):
         route_idx = idx
         route = copy.deepcopy(sol[route_idx])
-        route_cost = FC.get_sol_cost(route, instance)
+        # print("pre_get_cost", route)
+        route_cost = FC.get_route_cost(route, instance)
 
         # 路径中少于两个点
         if len(route) < 4:
@@ -41,7 +42,7 @@ def or_opt(sol, instance):
     for idx in range(num_of_route):
         route_idx = idx
         route = copy.deepcopy(sol[route_idx])
-        route_cost = FC.get_sol_cost(route, instance)
+        route_cost = FC.get_route_cost(route, instance)
 
         # 如果路径中少于3个点
         if (len(route) < 5):
@@ -56,8 +57,8 @@ def or_opt(sol, instance):
                 ele1 = route[index1]
                 ele2 = route[index2]
 
-                route.remove(index1)
-                route.remove(index2)
+                route.remove(ele1)
+                route.remove(ele2)
 
                 index3 = j
                 index4 = j + 1
@@ -238,6 +239,7 @@ def cross_exchange_operator(sol, instance):
 
 def LS_OP(sol, instance, op_id):
     operator = LOCAL_OPERATOR_POOL[op_id]
+    # print("pre_op", sol)
     if operator == 1:
         new_sol = opt2_exchange(sol, instance)
         new_cost = FC.get_sol_cost(new_sol, instance)
@@ -267,7 +269,10 @@ def LS(new_sol, instance):
     op_id = 0
     k = 0
     new_cost = FC.get_sol_cost(new_sol, instance)
+    # print("LS")
+    # print(new_cost)
     while k < len(LOCAL_OPERATOR_POOL):
+        # print("pre_LS_OP",new_sol)
         tmp_sol, tmp_cost = LS_OP(new_sol, instance, op_id)
         if tmp_cost < new_cost:
             new_sol = tmp_sol
@@ -276,4 +281,5 @@ def LS(new_sol, instance):
         else:
             k = k + 1
         op_id = (op_id + 1) % len(LOCAL_OPERATOR_POOL)
+    # print(new_cost)
     return new_sol, new_cost

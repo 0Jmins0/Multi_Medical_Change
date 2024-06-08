@@ -9,11 +9,8 @@ import Function as FC
 REMOVE_POOL = GP.REMOVE_POOL
 INSERT_POOL = GP.INSERT_POOL
 
-MaxI = 100  # 最大迭代次数
-Terminal = 0  # 迭代次数
-
+MaxI = GP.MaxI  # 最大迭代次数
 NonImp = 1
-
 T0 = 187
 q = 0.88
 
@@ -53,9 +50,9 @@ def remove_string(cur_sol, instance):
         Len = len(sol) - 2
         Max_del = min(NonImp, Len)
         Del_len = random.randint(Max_del, Len)  # [Max_del,Len]
-        start = random.randint(1, Len - Del_len)  # [1,Len - Del_len + 1]
-        end = start + Del_len
-
+        # print("rem_string",Len, Del_len)
+        start = random.randint(1, Len - Del_len + 1)  # [1,Len - Del_len + 1]
+        end = start + Del_len - 1
         bank.extend(sol[start:end])
 
     new_sol = FC.remove_bank(bank,cur_sol)
@@ -80,28 +77,28 @@ def remove_worst(cur_sol, instance):
 
 
 def insert_random(bank, cur_sol, instance):
-    try:
-        bank_copy = copy.deepcopy(bank)
-        for node in bank_copy:
-            route_id = random.randint(len(cur_sol))
+    bank_copy = copy.deepcopy(bank)
+    for node in bank_copy:
+        if len(cur_sol) == 0:
+            new_route = []
+            new_route.extend([0, node, instance['n'] + 1])
+            cur_sol.append(new_route)
+        else:
+            route_id = random.randint(0, len(cur_sol) - 1)
             pos, cost = FC.insert_node_to_route(node, cur_sol[route_id], instance)
             if (pos == -1):
                 new_route = []
-                new_route.extend([0, node, instance['n'][0] + 1])
+                new_route.extend([0, node, instance['n'] + 1])
                 cur_sol.append(new_route)
             else:
-                cur_sol[route_id].insert(node, pos)
-        return cur_sol
-
-
-    except Exception as e:
-        print(f"From Random_Ins get an error: {e}")
+                cur_sol[route_id].insert(pos, node)
+    return cur_sol
 
 #  贪心的插入每一个点
 def insert_greedy(bank, cur_sol, instance):
     for node in bank:
         Min_pos = -1
-        Min_cost = 99999999
+        Min_cost = 999999999999
         Min_route_id = -1
         for route_id, route in enumerate(cur_sol):
             tmp_pos, tmp_cost = FC.insert_node_to_route(node, route, instance)
@@ -110,9 +107,9 @@ def insert_greedy(bank, cur_sol, instance):
                 Min_route_id = route_id
                 Min_pos = tmp_pos
         if Min_pos == -1:
-            cur_sol.append([0, node, instance['n'][0] + 1])
+            cur_sol.append([0, node, instance['n'] + 1])
         else:
-            cur_sol[Min_route_id].insert(node, Min_pos)
+            cur_sol[Min_route_id].insert( Min_pos,node)
 
     return cur_sol
 
@@ -124,47 +121,54 @@ def insert_sequential(bank, cur_sol, instance):
         for route_pos in range(0, len(cur_sol)):
             Min_pos, Min_cost = FC.insert_node_to_route(node, cur_sol[route_pos], instance)
             if(Min_pos != -1):
-                cur_sol[route_pos].insert(node, Min_pos)
+                cur_sol[route_pos].insert(Min_pos, node)
                 ok = 1
                 break
         if ok == 0:
-            cur_sol.append([0, node, instance['n'][0] + 1])
+            cur_sol.append([0, node, instance['n'] + 1])
     return cur_sol
 
 
 def distroy_and_repair(current_sol, removal_id, insert_id, instance):
-    try:
-        bank = []
-        new_sol = current_sol
-        new_cost = float('inf')
+    # try:
+    bank = []
+    new_sol = current_sol
+    new_cost = float('inf')
 
-        # Removel
-        if removal_id == 1:
-            bank, new_sol = remove_random(current_sol, instance)
-        if removal_id == 2:
-            bank, new_sol = remove_distance(current_sol, instance)
-        if removal_id == 3:
-            bank, new_sol = remove_string(current_sol, instance)
-        if removal_id == 4:
-            bank, new_sol = remove_worst(current_sol, instance)
+    # print("rem:",removal_id, "ins:",insert_id)
+    # Removel
+    if removal_id == 1:
+        bank, new_sol = remove_random(current_sol, instance)
+    if removal_id == 2:
+        bank, new_sol = remove_distance(current_sol, instance)
+    if removal_id == 3:
+        bank, new_sol = remove_string(current_sol, instance)
+    if removal_id == 4:
+        bank, new_sol = remove_worst(current_sol, instance)
 
-        # Insert
-        if insert_id == 1:
-            new_sol = insert_random(bank, new_sol, instance)
-        if insert_id == 2:
-            new_sol = insert_greedy(bank, new_sol, instance)
-        if insert_id == 3:
-            new_sol = insert_sequential(bank, new_sol, instance)
+    # print("new_sol_rem:", new_sol,bank)
 
-        new_cost = FC.get_sol_cost(new_sol, instance)
+    # Insert
+    if insert_id == 1:
+        new_sol = insert_random(bank, new_sol, instance)
+    if insert_id == 2:
+        new_sol = insert_greedy(bank, new_sol, instance)
+    if insert_id == 3:
+        new_sol = insert_sequential(bank, new_sol, instance)
 
-        return new_sol, new_cost
-    except Exception as e:
-        print(f"From Distroy_and_Repair get an error: {e}")
+    # print("new_sol_ins:",new_sol)
+    new_cost = FC.get_sol_cost(new_sol, instance)
+
+    return new_sol, new_cost
+    # except Exception as e:
+    #     print(f"From Distroy_and_Repair get an error: {e}")
 
 
 def LNS(instance):
-    global NonImp, T0, q, MaxI, Terminal
+    global NonImp, T0, q
+
+    Terminal = 0  # 迭代次数
+    NonImp = 1
 
     T = T0
     init_sol, init_cost = FC.get_init_sol(instance)
@@ -180,7 +184,9 @@ def LNS(instance):
         new_sol, new_cost = distroy_and_repair(current_sol, removal_id, insert_id, instance)
 
         if new_cost < best_cost:
+            print("pre_LS", new_cost)
             new_sol, new_cost = LS(new_sol, instance)
+            print("after_LS", new_cost)
 
         T *= q
 
@@ -190,9 +196,11 @@ def LNS(instance):
             current_cost = new_cost
         else:
             r = random.random()
+            # print(diff)
             if T >= 0.01 and math.exp((diff) / (10000 * T)) >= r:
-                cur_sol = new_sol
-                cur_cost = new_cost
+                # print("acc")
+                current_sol = new_sol
+                current_cost = new_cost
 
         if current_cost < best_cost:
             best_sol = current_sol
@@ -201,7 +209,9 @@ def LNS(instance):
         else:
             NonImp += 1
         Terminal += 1
+        if(Terminal % 10 == 0):
+            print(Terminal, "cur:", current_cost, "best:", best_cost)
 
-    print("After LNS:best_sol,best_cost", best_sol, best_cost)
+    print("After LNS:best_sol,best_cost", len(best_sol), best_cost)
 
     return best_sol, best_cost

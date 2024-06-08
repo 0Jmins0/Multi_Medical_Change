@@ -2,8 +2,9 @@ from Test import evaluate
 try:
     k = 0
     while True:
-        # a = input()
-        res = evaluate(0, k)
+        print("data:")
+        a = str(input())
+        res = evaluate(a, k)
         k += 1
         pass
 except SystemExit:

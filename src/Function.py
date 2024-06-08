@@ -28,29 +28,29 @@ def get_route_cost(route, instance):
 def get_sol_cost(sol, instance):
     cost = 0
     for route in sol:
-        cost += get_route_cost(route, instance)
+        cost += get_route_cost(route, instance) + COST_OF_DELIVERY
     return cost
 
 
 def insert_node_to_route(node, route, instance):
     capacity = ORGAN_CAPACITY_OF_DELIVERY
+
     for nn in route:
         capacity -= instance['need'][nn]
     if (capacity - instance['need'][node] < 0):
         return -1, -1
+
     Min_cost = 99999999
     Min_pos = -1
-    orgion_cost = get_route_cost(route, instance)
+    original = get_route_cost(route, instance)
 
-    for i in range(1, len(route) - 2):  # 可以插入到第 1 个点前到第 n + 1 个点前
-        new_cost = orgion_cost - instance['distance'][route[i - 1]][route[i]] + \
+    for i in range(1, len(route)):  # 可以插入到第 1 个点前到第 n + 1 个点前
+        new_cost = original - instance['distance'][route[i - 1]][route[i]] + \
                    instance['distance'][route[i - 1]][node] + \
                    instance['distance'][node][route[i]]
-
         if (Min_cost > new_cost):
             Min_cost = new_cost
             Min_pos = i
-
     return Min_pos, Min_cost
 
 
@@ -63,10 +63,14 @@ def get_init_sol(instance):
         route_index = -1
         for index, route in enumerate(new_sol):
             tmp_pos, tmp_cost = insert_node_to_route(i, route, instance)
-            if (tmp_cost < cost):
+            if tmp_cost == -1 or tmp_pos == -1:
+                continue
+            if tmp_cost < cost:
+
                 cost = tmp_cost
                 pos = tmp_pos
                 route_index = index
+
         if pos == -1 or route_index == -1:
             route = []
             route.extend([0, i, n + 1])

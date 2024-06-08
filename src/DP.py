@@ -1,9 +1,10 @@
 import numpy as np
 
+
 def get_binary(number):
     binary_representation = bin(number)
     return binary_representation[2:]
-def get_charge_node(f,dis,charge):
+def get_charge_node(f, dis, charge):
     charge_node =[]
     L = len(f)
     dp = np.zeros(2 ** (L + 1), dtype=int)
@@ -50,6 +51,15 @@ def remove_dup(charge_node):
             charge_node.remove(a)
     return charge_node
 
+def get_sol_charge(sol, instance):
+    for route in sol:
+        f = []
+        dis = 0
+        for i in range(len(route) - 1, 0, -1):
+            f.append(dis)
+            dis += instance['distance'][route[i - 1]][route[i]]
+        f.append(dis)
+        f.reverse()
 
 
 p = 3  # 充电相当与耗电量的系数(耗电1，充电p)
