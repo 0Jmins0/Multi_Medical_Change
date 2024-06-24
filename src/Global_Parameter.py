@@ -4,20 +4,28 @@ DIS_TO_CONSUME_OF_DELIVERY = 1  # 运输车辆距离和耗电量的关系系数
 DIS_TO_CONSUME_OF_CHARGE = 1  # 充电车距离和耗电量的关系系数
 CHARGE_TO_COST = 1  # 消耗的电量和花费的关系系数，电量 * 系数 = 代价
 
-BATTERY_CAPACITY_OF_DELIVERY = 500  # 送货车电池容量
+BATTERY_CAPACITY_OF_DELIVERY = 300  # 送货车电池容量
 ORGAN_CAPACITY_OF_DELIVERY = 10  # 送货车器官容量
 SPEED_OF_DELIVERY = 1  # 送货车速度（时间 * 参数 = 距离）
-COST_OF_DELIVERY = 1000  # 送货车使用代价
+COST_OF_DELIVERY = 100  # 送货车使用代价
 
 BATTERY_CAPACITY_OF_CHARGE = 1000  # 充电车电池容量
 SPEED_OF_CHARGE = 10  # 充电车速度
 COST_OF_CHARGE = 1000  # 充电车使用代价
 
 REMOVE_POOL = [1, 2, 3, 4]  # 删除操作池
-INSERT_POOL = [1, 2, 3]  # 插入操作池
+INSERT_POOL = [1, 2, 3, 4]  # 插入操作池
 LOCAL_OPERATOR_POOL = [1, 2, 3, 4, 5]  # 邻域操作池
 MaxI = 100  # 最大迭代次数
+# 车使用代价1000
+#165: 49065 47910 46870
+#110: 30219 30168 30178
+#30:  7501  7499 7499
 
+# 车使用代价100
+#165: 9465 9242 9183
+#110: 5019 4968 4978
+#30:  1201  1199 1199
 # 随机数据生成范围
 RANDOM_SEED = 1234
 

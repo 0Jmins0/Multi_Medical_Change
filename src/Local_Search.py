@@ -274,6 +274,7 @@ def LS(new_sol, instance):
     while k < len(LOCAL_OPERATOR_POOL):
         # print("pre_LS_OP",new_sol)
         tmp_sol, tmp_cost = LS_OP(new_sol, instance, op_id)
+        print(" ", tmp_cost)
         if tmp_cost < new_cost:
             new_sol = tmp_sol
             new_cost = tmp_cost

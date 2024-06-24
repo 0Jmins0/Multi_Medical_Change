@@ -120,12 +120,16 @@ def read_data(datain):
         pickups[i]["y"] = long[pickups[i]["ID"]][1]
         # print("i = ", i, pickups[i])
 
+
+    print(dis)
+    print(dis[2][3],dis[3][2])
+
     n = len(pickups) - 1
     loads = []
     loads.append(0)
     loads.extend([int(pickups[i]['load']) % 4 + 1 for i in range(1, n + 1)])
     loads.append(0)
-    dis_matrix = [[round(d[i]) for i in range(n + 2)] for d in dis]
+    dis_matrix = [[round(d[i])  for i in range(n + 2)] for d in dis]
 
     # print(n)  # 客户点数量
     # print(loads)  # [[0, 0], [1, 24], [2, 25], [3, 38], [4, 48], [5, 48], [6, 50], [7, 56],,,,]

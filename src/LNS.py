@@ -128,6 +128,65 @@ def insert_sequential(bank, cur_sol, instance):
             cur_sol.append([0, node, instance['n'] + 1])
     return cur_sol
 
+# 找到某个点的三个最好的插入位置的cost
+def find_cost(node, cur_sol, instance):
+    change_list = []
+    for route_pos in range(0, len(cur_sol)):
+        for pos in range(1, len(cur_sol[route_pos])):
+            u = cur_sol[route_pos][pos - 1]
+            v = cur_sol[route_pos][pos]
+            cost_change = (instance['distance'][u][node] +
+                           instance['distance'][node][v] -
+                           instance['distance'][u][v])
+            cur = [cost_change, route_pos, pos]
+            tmp_route = copy.deepcopy(cur_sol[route_pos])
+            tmp_route.insert(pos, node)
+            if FC.check_route(tmp_route, instance):
+                change_list.append(cur)
+
+    change_list = sorted(change_list, key=lambda x: x[0])
+
+    if len(change_list) == 0:
+        return [0, 0, 0], [0, 0, 0], [0, 0, 0]
+    if len(change_list) == 1:
+        return change_list[0], [0, 0, 0], [0, 0, 0]
+    if len(change_list) == 2:
+        return change_list[0], change_list[1], [0, 0, 0]
+    return change_list[0], change_list[1], change_list[2]
+
+
+def insert_regret2(bank, cur_sol, instance):
+    regret_list = []
+    new_sol = copy.deepcopy(cur_sol)
+    while len(bank) != 0:
+        random.shuffle(bank)
+        regret_list.clear()
+        tmp_bank = copy.deepcopy(bank)
+        for node in tmp_bank:
+            # l1 = [cost, route_pos, pos]
+            l1, l2, l3 = find_cost(node, new_sol, instance)
+            if l1[0] == 0 and l1[1] == 0 and l1[2] == 0:
+                new_sol.append([0, node, instance['n'] + 1])
+                bank.remove(node)
+            else:
+                regret = l1[0] - l2[0]
+                cur = [regret, node, l1]
+                regret_list.append(cur)
+
+        if len(regret_list) > 0 :
+            regret_list = sorted(regret_list, key=lambda x: x[0])
+            route = regret_list[0][2][1]
+            pos = regret_list[0][2][2]
+            node = regret_list[0][1]
+            new_sol[route].insert(pos, node)
+            bank.remove(node)
+
+    return new_sol
+
+
+
+
+
 
 def distroy_and_repair(current_sol, removal_id, insert_id, instance):
     # try:
@@ -155,6 +214,8 @@ def distroy_and_repair(current_sol, removal_id, insert_id, instance):
         new_sol = insert_greedy(bank, new_sol, instance)
     if insert_id == 3:
         new_sol = insert_sequential(bank, new_sol, instance)
+    if insert_id == 4:
+        new_sol = insert_regret2(bank, new_sol, instance)
 
     # print("new_sol_ins:",new_sol)
     new_cost = FC.get_sol_cost(new_sol, instance)
@@ -174,9 +235,14 @@ def LNS(instance):
     init_sol, init_cost = FC.get_init_sol(instance)
     best_sol, best_cost = init_sol, init_cost
     current_sol, current_cost = init_sol, init_cost
-    print("初始化", init_sol, init_cost)
+    print("初始化",  init_cost, init_sol)
 
     print("迭代退火")
+
+    new_sol, new_cost = LS(init_sol, instance)
+
+    print("sdfsadfsdfsdfsdf")
+    print(new_cost)
 
     while Terminal < MaxI:
         removal_id = random.choice(REMOVE_POOL)
@@ -197,7 +263,7 @@ def LNS(instance):
         else:
             r = random.random()
             # print(diff)
-            if T >= 0.01 and math.exp((diff) / (10000 * T)) >= r:
+            if T >= 0.01 and math.exp((diff) / (1000 * T)) >= r:
                 # print("acc")
                 current_sol = new_sol
                 current_cost = new_cost
