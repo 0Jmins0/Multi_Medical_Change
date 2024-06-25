@@ -1,11 +1,11 @@
 from Test import evaluate
 try:
-    k = 0
+    k = 1
     while True:
         print("data:")
         a = str(input())
         res = evaluate(a, k)
-        k = 1
+
         pass
 except SystemExit:
     print("Program Stopped!")

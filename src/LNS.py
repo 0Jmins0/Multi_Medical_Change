@@ -210,7 +210,33 @@ def insert_regret2(bank, cur_sol, instance):
     return new_sol
 
 
+def insert_regret3(bank, cur_sol, instance):
+    regret_list = []
+    new_sol = copy.deepcopy(cur_sol)
+    while len(bank) != 0:
+        random.shuffle(bank)
+        regret_list.clear()
+        tmp_bank = copy.deepcopy(bank)
+        for node in tmp_bank:
+            # l1 = [cost, route_pos, pos]
+            l1, l2, l3 = find_cost(node, new_sol, instance)
+            if l1[0] == 0 and l1[1] == 0 and l1[2] == 0:
+                new_sol.append([0, node, instance['n'] + 1])
+                bank.remove(node)
+            else:
+                regret = l1[0] - l3[0]
+                cur = [regret, node, l1]
+                regret_list.append(cur)
 
+        if len(regret_list) > 0 :
+            regret_list = sorted(regret_list, key=lambda x: x[0])
+            route = regret_list[0][2][1]
+            pos = regret_list[0][2][2]
+            node = regret_list[0][1]
+            new_sol[route].insert(pos, node)
+            bank.remove(node)
+
+    return new_sol
 
 
 
@@ -244,6 +270,8 @@ def distroy_and_repair(current_sol, removal_id, insert_id, instance):
         new_sol = insert_sequential(bank, new_sol, instance)
     if insert_id == 4:
         new_sol = insert_regret2(bank, new_sol, instance)
+    if insert_id == 5:
+        new_sol = insert_regret3(bank, new_sol, instance)
 
     # print("new_sol_ins:",new_sol)
     new_cost = FC.get_sol_cost(new_sol, instance)
@@ -258,6 +286,7 @@ def LNS(instance):
 
     Terminal = 0  # 迭代次数
     NonImp = 1
+    n = instance['n']
 
     T = T0
     init_sol, init_cost = FC.get_init_sol(instance)
@@ -273,7 +302,7 @@ def LNS(instance):
     # print("sdfsadfsdfsdfsdf")
     # print(new_cost)
 
-    while Terminal < MaxI:
+    while Terminal < MaxI and NonImp <= n:
         removal_id = random.choice(REMOVE_POOL)
         insert_id = random.choice(INSERT_POOL)
         new_sol, new_cost = distroy_and_repair(current_sol, removal_id, insert_id, instance)
@@ -292,7 +321,7 @@ def LNS(instance):
         else:
             r = random.random()
             # print(diff)
-            if T >= 0.01 and math.exp((diff) / (10000 * T)) >= r:
+            if T >= 0.01 and math.exp((diff) / (100000 * T)) >= r:
                 # print("acc")
                 current_sol = new_sol
                 current_cost = new_cost
@@ -304,8 +333,8 @@ def LNS(instance):
         else:
             NonImp += 1
         Terminal += 1
-        # if(Terminal % 10 == 0):
-        #     print(Terminal, "cur:", current_cost, "best:", best_cost)
+        if(Terminal % 10 == 0):
+            print(Terminal, "cur:", current_cost, "best:", best_cost)
 
     print("After LNS:best_sol,best_cost", len(best_sol), best_cost)
 
