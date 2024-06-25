@@ -1,10 +1,13 @@
 import copy
 import math
 import random
+import heapq
 
 import Global_Parameter as GP
 from Local_Search import LS
 import Function as FC
+from clinitial import initcl
+
 
 REMOVE_POOL = GP.REMOVE_POOL
 INSERT_POOL = GP.INSERT_POOL
@@ -74,6 +77,29 @@ def remove_worst(cur_sol, instance):
     bank = [row[1] for row in cost_list[:min(NonImp, n)]]
     tmp_sol = FC.remove_bank(bank,cur_sol)
     return bank, tmp_sol
+
+def remove_shaw(cur_sol, instance):
+    n = instance['n']
+    Q, bank, vis = [], [], [0 for i in range(n + 1)]
+    random_node = random.randint(1, n)
+    heapq.heappush(Q,(0, random_node))
+    num = 0
+    CL = initcl(instance)
+    while len(Q) > 0:
+        tmp = heapq.heappop(Q)
+        if vis[tmp[1]] == 1 :
+            continue
+        vis[tmp[1]] = 1
+        bank.append(tmp[1])
+        num += 1
+        if num == NonImp or num == n:
+            break
+        for i in range(1, n + 1):
+            if(vis[i] == 0):
+                heapq.heappush(Q, (CL[i][tmp[1]], i))
+    new_sol = FC.remove_bank(bank, cur_sol)
+    return bank, new_sol
+
 
 
 def insert_random(bank, cur_sol, instance):
@@ -204,6 +230,8 @@ def distroy_and_repair(current_sol, removal_id, insert_id, instance):
         bank, new_sol = remove_string(current_sol, instance)
     if removal_id == 4:
         bank, new_sol = remove_worst(current_sol, instance)
+    if removal_id == 5:
+        bank, new_sol = remove_shaw(current_sol, instance)
 
     # print("new_sol_rem:", new_sol,bank)
 
