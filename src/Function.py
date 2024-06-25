@@ -19,7 +19,7 @@ COST_OF_CHARGE = GP.COST_OF_CHARGE  # 充电车使用代价
 def get_route_cost(route, instance):
     dis = 0
     for i in range(1, len(route)):
-        dis += instance['distance'][i - 1][i]
+        dis += instance['distance'][route[i - 1]][route[i]]
     route_charge = dis * DIS_TO_CONSUME_OF_DELIVERY
     route_cost = route_charge * CHARGE_TO_COST
     return route_cost
@@ -28,6 +28,7 @@ def get_route_cost(route, instance):
 def get_sol_cost(sol, instance):
     cost = 0
     for route in sol:
+        # print(route)
         cost += get_route_cost(route, instance) + COST_OF_DELIVERY
     return cost
 

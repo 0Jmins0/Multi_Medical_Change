@@ -6,13 +6,13 @@ from DP import get_sol_charge
 
 
 def main(instance):
-    print(instance)
-    print("LNS求解送货车路线")
+    # print(instance)
+    # print("LNS求解送货车路线")
     sol, cost= LNS(instance)
-    print("LNS 求得的sol", sol, cost)
-    print("DP 求解充电位置")
-    charge_node = get_sol_charge(sol, instance)
-    print("DP 求得的充电位置:", charge_node)
+    # print("LNS 求得的sol", sol, cost)
+    # print("DP 求解充电位置")
+    # charge_node = get_sol_charge(sol, instance)
+    # print("DP 求得的充电位置:", charge_node)
 
 
 

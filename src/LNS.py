@@ -235,14 +235,15 @@ def LNS(instance):
     init_sol, init_cost = FC.get_init_sol(instance)
     best_sol, best_cost = init_sol, init_cost
     current_sol, current_cost = init_sol, init_cost
-    print("初始化",  init_cost, init_sol)
+    print("初始化cost",  init_cost)
+    # print("初始化sol", init_sol)
 
     print("迭代退火")
 
-    new_sol, new_cost = LS(init_sol, instance)
-
-    print("sdfsadfsdfsdfsdf")
-    print(new_cost)
+    # new_sol, new_cost = LS(init_sol, instance)
+    #
+    # print("sdfsadfsdfsdfsdf")
+    # print(new_cost)
 
     while Terminal < MaxI:
         removal_id = random.choice(REMOVE_POOL)
@@ -263,7 +264,7 @@ def LNS(instance):
         else:
             r = random.random()
             # print(diff)
-            if T >= 0.01 and math.exp((diff) / (1000 * T)) >= r:
+            if T >= 0.01 and math.exp((diff) / (10000 * T)) >= r:
                 # print("acc")
                 current_sol = new_sol
                 current_cost = new_cost
@@ -275,8 +276,8 @@ def LNS(instance):
         else:
             NonImp += 1
         Terminal += 1
-        if(Terminal % 10 == 0):
-            print(Terminal, "cur:", current_cost, "best:", best_cost)
+        # if(Terminal % 10 == 0):
+        #     print(Terminal, "cur:", current_cost, "best:", best_cost)
 
     print("After LNS:best_sol,best_cost", len(best_sol), best_cost)
 

@@ -15,7 +15,7 @@ COST_OF_CHARGE = 1000  # 充电车使用代价
 
 REMOVE_POOL = [1, 2, 3, 4]  # 删除操作池
 INSERT_POOL = [1, 2, 3, 4]  # 插入操作池
-LOCAL_OPERATOR_POOL = [1, 2, 3, 4, 5]  # 邻域操作池
+LOCAL_OPERATOR_POOL = [1, 2, 3, 4, 5, 6]  # 邻域操作池
 MaxI = 100  # 最大迭代次数
 # 车使用代价1000
 #165: 49065 47910 46870

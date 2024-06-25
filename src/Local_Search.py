@@ -128,7 +128,9 @@ def relocate_operator(sol, instance):
         return sol
 
     for index1 in range(num_of_routes):
-        for index2 in range(index1, num_of_routes):
+        for index2 in range(num_of_routes):
+            if index1 == index2:
+                continue
             # 选择两个路线
             route1 = copy.deepcopy(sol[index1])
             route2 = copy.deepcopy(sol[index2])
@@ -191,6 +193,7 @@ def exchange_operator(sol, instance):
                         return sol
     return sol
 
+
 # 选择路径1的连续两个节点，和路径2的连续两个节点，并交换
 def cross_exchange_operator(sol, instance):
     num_of_route = len(sol)
@@ -198,7 +201,9 @@ def cross_exchange_operator(sol, instance):
         return sol
 
     for path_index1 in range(num_of_route):
-        for path_index2 in range(path_index1 + 1, num_of_route):
+        for path_index2 in range(num_of_route):
+            if path_index1 == path_index2:
+                continue
             route1 = copy.deepcopy(sol[path_index1])
             route2 = copy.deepcopy(sol[path_index2])
 
@@ -224,7 +229,6 @@ def cross_exchange_operator(sol, instance):
                     # 将第一个子序列放到第二个子序列的位置
                     tmp2[node_index3:node_index4 + 1] = segment1
 
-
                     if FC.check_route(tmp1, instance) == False or FC.check_route(tmp2, instance) == False:
                         continue
 
@@ -236,6 +240,7 @@ def cross_exchange_operator(sol, instance):
                         return sol
 
     return sol
+
 
 def LS_OP(sol, instance, op_id):
     operator = LOCAL_OPERATOR_POOL[op_id]
@@ -265,6 +270,7 @@ def LS_OP(sol, instance, op_id):
         new_cost = FC.get_sol_cost(new_sol, instance)
         return new_sol, new_cost
 
+
 def LS(new_sol, instance):
     op_id = 0
     k = 0
@@ -274,7 +280,6 @@ def LS(new_sol, instance):
     while k < len(LOCAL_OPERATOR_POOL):
         # print("pre_LS_OP",new_sol)
         tmp_sol, tmp_cost = LS_OP(new_sol, instance, op_id)
-        print(" ", tmp_cost)
         if tmp_cost < new_cost:
             new_sol = tmp_sol
             new_cost = tmp_cost
