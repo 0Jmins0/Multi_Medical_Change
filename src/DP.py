@@ -108,7 +108,7 @@ def get_sol_charge(sol, instance):
         charge_node = get_time_node(charge_node, route, time)
         charge_list.append(charge_node)
 
-    return charge_list, time_list
+    return charge_list
 
 
 

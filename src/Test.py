@@ -15,7 +15,7 @@ def main(instance):
     sol, cost = LNS(instance)
     print("LNS 求得的sol", cost, sol)
     # print("DP 求解充电位置")
-    charge_node, time_list = get_sol_charge(sol, instance)
+    charge_node = get_sol_charge(sol, instance)
     # charge_node[0][0][0] : 第 0 号路线的第 0 号解的第 0 条充电边: ((time_u,node_u),(time_v,node_v))
     print("DP 求得的充电位置:", charge_node)
 
@@ -31,6 +31,6 @@ def evaluate(a, k, p):
     if p == 2:
         instance = read_data_random(a)
     # print(instance)
-    main(instance)
+    return main(instance)
     # {'n': 6, 'need': [0, 1, 1, 4, 3, 2, 2, 0], 'distance': [[0, 598, 493, 480, 607, 607, 480, 0], [601, 0, 109, 124, 131, 131, 124, 601], [496, 118, 0, 17, 180, 180, 17, 496], [489, 129, 22, 0, 172, 172, 0, 489], [616, 137, 178, 173, 0, 0, 173, 616], [616, 137, 178, 173, 0, 0, 173, 616], [489, 129, 22, 0, 172, 172, 0, 489], [0, 598, 493, 480, 607, 607, 480, 0]]}
     # {'n': 3, 'need': [['1', '1'], ['2', '1'], ['3', '1']], 'distence': [['0', '19', '2', '3', '0'], ['19', '0', '4', '12', '19'], ['2', '4', '0', '8', '2'], ['3', '12', '8', '0', '3'], ['0', '19', '2', '3', '0']]}
