@@ -1,4 +1,5 @@
-def read_data(datain):
+import csv
+def read_data_cola(datain):
     vehicle = 20
     Penalty = 5
     capacityVechicle = 1000
@@ -138,7 +139,19 @@ def read_data(datain):
     instance['distance'] = dis_matrix
     return instance
 
-
+def read_data_random(p):
+    other = '../data/data' + str(p) + '.csv'
+    instance = {}
+    csv_data = []
+    with open(other, newline='') as csvfile:
+        reader = csv.reader(csvfile)
+        for row in reader:
+            csv_data.append(row)
+        n = int(csv_data[0][0])
+        instance['n'] = n
+        instance['need'] = csv_data[1:n+1]  # Extract need data
+        instance['distence'] = csv_data[n+1:]  # Extract discharge data
+    return instance
 
 # list = [30, 41, 43, 44,51, 53, 54, 57, 59, ]
 # while True:

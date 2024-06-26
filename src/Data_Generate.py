@@ -19,10 +19,11 @@ def data_generate(k):
         n = 3
 
     need = []
+    need.append(0)
     for num in range(n):
         cnt = random.randint(RANDOM_ORGAN_L, RANDOM_ORGAN_R)
-        medical = [num + 1, cnt]
-        need.append(medical)
+        need.append(cnt)
+    need.append(0)
 
     distance = []
     for u in range(0, n + 2):
@@ -42,7 +43,8 @@ def data_generate(k):
     with open(file_name, 'w', encoding='utf-8', newline='') as f:
         writer = csv.writer(f)
         writer.writerow([n])
-        writer.writerows(need)
+        # print(need)
+        writer.writerow(need)
         writer.writerows(distance)
 
 

@@ -4,7 +4,9 @@ import Global_Parameter as GP
 def get_binary(number):
     binary_representation = bin(number)
     return binary_representation[2:]
-def get_charge_node(f, dis, charge):
+def get_charge_node(f, dis):
+    p = GP.CHARGE_CONSUME
+    charge = [x * p for x in dis]
     charge_node =[]
     Max = GP.BATTERY_CAPACITY_OF_DELIVERY
     L = len(f)
@@ -52,13 +54,32 @@ def remove_dup(charge_node):
             charge_node.remove(a)
     return charge_node
 
+# 将二进制补全为一样长度
+def auto_completion(charge_node, route):
+    for i, charge in enumerate(charge_node):
+        while len(charge) < len(route) - 1:
+            charge = '0' + charge
+        charge_node[i] = charge[::-1]
+    return charge_node
+
+def get_time_node(charge_node, route,time):
+    charge_time_node = []
+    for charge in charge_node:
+        pair = []
+        for j in range(len(charge)):  # route 的第 j 条边 连接点 j 和 j + 1
+            if charge[j] == '1':
+                pair.append(((time[j], route[j]),(time[j + 1], route[j + 1])))  # ((time_u,node_u),(time_v,node_v))
+        charge_time_node.append(pair)
+    return charge_time_node
+
+
 def get_sol_charge(sol, instance):
     charge_list = []
+    time_list = []
     p = 3
     for route in sol:
         f = []
         dis = []
-        dis.append(0)
         charge = 0
         for i in range(len(route) - 1, 0, -1):
             f.append(charge)
@@ -66,24 +87,34 @@ def get_sol_charge(sol, instance):
             charge += dis[-1] * GP.DIS_TO_CHARGE
         f.append(charge)
         f.reverse()
-        cha = [x * p for x in dis]
-        # print("route", route)
-        # print(f, dis, cha)
-        charge_node = get_charge_node(f, dis, cha)
-        # print("after_get", charge_node)
-        charge_node = remove_dup(charge_node[2:])
-        # print("after_remove", charge_node)
+        dis.append(0)
+        dis.reverse()
+        tt = 0
+        time = []  # 送货车到达点i的时间
+        for dd in dis:
+            tt += round(dd / GP.SPEED_OF_DELIVERY)
+            time.append(tt)
+        time_list.append(time)
+        print("route", route)
+        print("time,f,dis", time, f, dis)
+        charge_node = get_charge_node(f, dis)
+        print("after_get", charge_node)
+        charge_node = remove_dup(charge_node)
+        print("after_remove", charge_node)
         charge_node = [get_binary(x) for x in charge_node]
-        # print("after_bin", charge_node)
+        print("after_bin", charge_node)
+        charge_node = auto_completion(charge_node, route)
+        print("after_com", charge_node)
+        charge_node = get_time_node(charge_node, route, time)
         charge_list.append(charge_node)
 
-    return charge_list
+    return charge_list, time_list
 
 
 
 # p = 3  # 充电相当与耗电量的系数(耗电1，充电p)
-# f = [650, 450, 350, 250, 50, 0]
-# dis = [0, 200, 100, 100, 200, 50]
+# f = [650, 450, 350, 250, 50, 0]  在第 i 个点的时候，还需要的电量
+# dis = [0, 200, 100, 100, 200, 50]  第 i 和第 i-1 个点之间的距离
 # charge = [x * p for x in dis]
 # Max = 300
 #

@@ -3,9 +3,10 @@ DIS_TO_CHARGE = 1  # 距离和充电量的关系系数
 DIS_TO_CONSUME_OF_DELIVERY = 1  # 运输车辆距离和耗电量的关系系数
 DIS_TO_CONSUME_OF_CHARGE = 1  # 充电车距离和耗电量的关系系数
 CHARGE_TO_COST = 1  # 消耗的电量和花费的关系系数，电量 * 系数 = 代价
+CHARGE_CONSUME = 3  # 送货车充电速度和耗电速度之比
 
-BATTERY_CAPACITY_OF_DELIVERY = 300  # 送货车电池容量
-ORGAN_CAPACITY_OF_DELIVERY = 10  # 送货车器官容量
+BATTERY_CAPACITY_OF_DELIVERY = 150  # 送货车电池容量
+ORGAN_CAPACITY_OF_DELIVERY = 15  # 送货车器官容量
 SPEED_OF_DELIVERY = 1  # 送货车速度（时间 * 参数 = 距离）
 COST_OF_DELIVERY = 100  # 送货车使用代价
 
@@ -31,8 +32,8 @@ RANDOM_N_R = 50
 RANDOM_ORGAN_L = 1  # 器官需求数量
 RANDOM_ORGAN_R = 5
 
-RANDOM_DIS_L = 1  # 任意两点距离
-RANDOM_DIS_R = 20
+RANDOM_DIS_L = 30  # 任意两点距离
+RANDOM_DIS_R = 150
 
 
 # import Global_Parameter as GP
