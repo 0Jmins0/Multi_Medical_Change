@@ -7,7 +7,7 @@ try:
         p = eval(input())
         if p == 2:
             print("choose a number between 0 - 49")
-        else :
+        else:
             print("choose a number from[6,30,121,165]")
         a = str(input())
         res = evaluate(a, k, p)

@@ -1,5 +1,6 @@
 import numpy as np
 import Global_Parameter as GP
+import time
 
 def get_binary(number):
     binary_representation = bin(number)
@@ -24,19 +25,19 @@ def get_charge_node(f, dis):
             if dp[j] < 0:
                 dp[j] = INF
                 vis[j] = -1
-                dp[j | k] = INF
-                vis[j | k] = -1
+                dp[k] = INF
+                vis[k] = -1
 
-            dp[j | k] = min(dp[j] - dis[i] + charge[i], Max)
+            dp[k] = min(dp[j] - dis[i] + charge[i], Max)
             dp[j] = dp[j] - dis[i]
 
             # 判断合法情况
             if dp[j] >= f[i]:
                 vis[j] = 1
                 charge_node.append(j)
-            if dp[j | k] >= f[i]:
-                vis[j | k] = 1
-                charge_node.append((j | k))
+            if dp[k] >= f[i]:
+                vis[k] = 1
+                charge_node.append(k)
         # print("charge",[get_binary(x) for x in charge_node])
     return charge_node
 
@@ -74,9 +75,9 @@ def get_time_node(charge_node, route,time):
 
 
 def get_sol_charge(sol, instance):
+    start_time = time.perf_counter()
     charge_list = []
     time_list = []
-    p = 3
     for route in sol:
         f = []
         dis = []
@@ -90,13 +91,13 @@ def get_sol_charge(sol, instance):
         dis.append(0)
         dis.reverse()
         tt = 0
-        time = []  # 送货车到达点i的时间
+        Time = []  # 送货车到达点i的时间
         for dd in dis:
             tt += round(dd / GP.SPEED_OF_DELIVERY)
-            time.append(tt)
-        time_list.append(time)
+            Time.append(tt)
+        time_list.append(Time)
         print("route", route)
-        # print("time,f,dis", time, f, dis)
+        # print("Time,f,dis", Time, f, dis)
         charge_node = get_charge_node(f, dis)
         # print("after_get", charge_node)
         charge_node = remove_dup(charge_node)
@@ -105,9 +106,11 @@ def get_sol_charge(sol, instance):
         # print("after_bin", charge_node)
         charge_node = auto_completion(charge_node, route)
         print("after_com", charge_node)
-        charge_node = get_time_node(charge_node, route, time)
+        charge_node = get_time_node(charge_node, route, Time)
         charge_list.append(charge_node)
 
+    end_time = time.perf_counter()
+    print("DP_time:", end_time - start_time)
     return charge_list
 
 
@@ -130,3 +133,4 @@ def get_sol_charge(sol, instance):
             # print("j:", get_binary(j))
             # print("j | (1 << (i - 1)) :", get_binary(j | k))
             # print("dp[j]:", dp[j])
+

@@ -7,10 +7,10 @@ from Read_Data import read_data_random, read_data_cola
 from DP import get_sol_charge
 from clinitial import initcl
 from Charge_Route import get_charge_route
+from Force import get_sol_charge_force
 
 
 def main(instance):
-
     start_time = time.perf_counter()
     # print(initcl(instance))
     # print(instance)
@@ -25,6 +25,7 @@ def main(instance):
     end_time = time.perf_counter()
     print("运行时间", end_time - start_time)
 
+    charge_node_force = get_sol_charge_force(sol, instance)
 
 
 def evaluate(a, k, p):

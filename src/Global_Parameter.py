@@ -27,7 +27,7 @@ MaxI = 300  # 最大迭代次数
 RANDOM_SEED = 1234
 
 RANDOM_N_L = 5  # 客户点数量
-RANDOM_N_R = 50
+RANDOM_N_R = 100
 
 RANDOM_ORGAN_L = 1  # 器官需求数量
 RANDOM_ORGAN_R = 4
