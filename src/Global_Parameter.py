@@ -30,10 +30,10 @@ RANDOM_N_L = 5  # 客户点数量
 RANDOM_N_R = 50
 
 RANDOM_ORGAN_L = 1  # 器官需求数量
-RANDOM_ORGAN_R = 5
+RANDOM_ORGAN_R = 4
 
-RANDOM_DIS_L = 30  # 任意两点距离
-RANDOM_DIS_R = 150
+RANDOM_DIS_L = 10  # 任意两点距离
+RANDOM_DIS_R = 100
 
 
 # import Global_Parameter as GP

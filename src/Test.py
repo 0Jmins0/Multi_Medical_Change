@@ -1,14 +1,17 @@
 import random
+import time
 
 from LNS import LNS
 # from readData_cola import read_data
 from Read_Data import read_data_random, read_data_cola
 from DP import get_sol_charge
 from clinitial import initcl
+from Charge_Route import get_charge_route
 
 
 def main(instance):
 
+    start_time = time.perf_counter()
     # print(initcl(instance))
     # print(instance)
     # print("LNS求解送货车路线")
@@ -18,6 +21,9 @@ def main(instance):
     charge_node = get_sol_charge(sol, instance)
     # charge_node[0][0][0] : 第 0 号路线的第 0 号解的第 0 条充电边: ((time_u,node_u),(time_v,node_v))
     print("DP 求得的充电位置:", charge_node)
+    print("获得充电车代价", get_charge_route(charge_node, instance))
+    end_time = time.perf_counter()
+    print("运行时间", end_time - start_time)
 
 
 
