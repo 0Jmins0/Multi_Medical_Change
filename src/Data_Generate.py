@@ -48,5 +48,5 @@ def data_generate(k):
         writer.writerows(distance)
 
 
-for i in range(500):
+for i in range(1314, 1315):
     data_generate(i)

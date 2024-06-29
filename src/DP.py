@@ -2,21 +2,26 @@ import numpy as np
 import Global_Parameter as GP
 import time
 
+
 def get_binary(number):
     binary_representation = bin(number)
     return binary_representation[2:]
+
+
 def get_charge_node(f, dis):
     p = GP.CHARGE_CONSUME
     charge = [x * p for x in dis]
-    charge_node =[]
+    charge_node = []
     Max = GP.BATTERY_CAPACITY_OF_DELIVERY
     L = len(f)
     dp = np.zeros(2 ** (L + 1), dtype=int)
     vis = np.zeros(2 ** (L + 1), dtype=int)
     INF = -99999
     dp[0] = Max
+    tot = 0
     for i in range(1, L):
         for j in range(0, (1 << (i - 1))):
+            tot += 1
             k = j | (1 << (i - 1))
             # 该状态已经满足
             if vis[j] == 1:
@@ -39,7 +44,9 @@ def get_charge_node(f, dis):
                 vis[k] = 1
                 charge_node.append(k)
         # print("charge",[get_binary(x) for x in charge_node])
+    print("DP循环总数", tot)
     return charge_node
+
 
 def remove_dup(charge_node):
     del_node = []
@@ -55,6 +62,7 @@ def remove_dup(charge_node):
             charge_node.remove(a)
     return charge_node
 
+
 # 将二进制补全为一样长度
 def auto_completion(charge_node, route):
     for i, charge in enumerate(charge_node):
@@ -63,19 +71,19 @@ def auto_completion(charge_node, route):
         charge_node[i] = charge[::-1]
     return charge_node
 
-def get_time_node(charge_node, route,time):
+
+def get_time_node(charge_node, route, time):
     charge_time_node = []
     for charge in charge_node:
         pair = []
         for j in range(len(charge)):  # route 的第 j 条边 连接点 j 和 j + 1
             if charge[j] == '1':
-                pair.append(((time[j], route[j]),(time[j + 1], route[j + 1])))  # ((time_u,node_u),(time_v,node_v))
+                pair.append(((time[j], route[j]), (time[j + 1], route[j + 1])))  # ((time_u,node_u),(time_v,node_v))
         charge_time_node.append(pair)
     return charge_time_node
 
 
 def get_sol_charge(sol, instance):
-    start_time = time.perf_counter()
     charge_list = []
     time_list = []
     for route in sol:
@@ -96,7 +104,7 @@ def get_sol_charge(sol, instance):
             tt += round(dd / GP.SPEED_OF_DELIVERY)
             Time.append(tt)
         time_list.append(Time)
-        print("route", route)
+        # print("route", route)
         # print("Time,f,dis", Time, f, dis)
         charge_node = get_charge_node(f, dis)
         # print("after_get", charge_node)
@@ -105,15 +113,11 @@ def get_sol_charge(sol, instance):
         charge_node = [get_binary(x) for x in charge_node]
         # print("after_bin", charge_node)
         charge_node = auto_completion(charge_node, route)
-        print("after_com", charge_node)
+        # print("after_com", charge_node)
         charge_node = get_time_node(charge_node, route, Time)
         charge_list.append(charge_node)
 
-    end_time = time.perf_counter()
-    print("DP_time:", end_time - start_time)
     return charge_list
-
-
 
 # p = 3  # 充电相当与耗电量的系数(耗电1，充电p)
 # f = [650, 450, 350, 250, 50, 0]  在第 i 个点的时候，还需要的电量
@@ -129,8 +133,7 @@ def get_sol_charge(sol, instance):
 # charge_node = [get_binary(x) for x in charge]
 # print(charge_node)
 
-            # print("i:", i, "j:", j, "j | (1 << (i - 1)) : ", j | k)
-            # print("j:", get_binary(j))
-            # print("j | (1 << (i - 1)) :", get_binary(j | k))
-            # print("dp[j]:", dp[j])
-
+# print("i:", i, "j:", j, "j | (1 << (i - 1)) : ", j | k)
+# print("j:", get_binary(j))
+# print("j | (1 << (i - 1)) :", get_binary(j | k))
+# print("dp[j]:", dp[j])
