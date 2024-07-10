@@ -44,7 +44,6 @@ def get_charge_node(f, dis):
                 vis[k] = 1
                 charge_node.append(k)
         # print("charge",[get_binary(x) for x in charge_node])
-    print("DP循环总数", tot)
     return charge_node
 
 
