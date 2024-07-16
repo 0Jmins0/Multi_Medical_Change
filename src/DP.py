@@ -9,7 +9,7 @@ def get_binary(number):
 
 
 def get_charge_node(f, dis):
-    p = GP.CHARGE_CONSUME
+    p = GP.DIS_TO_CHARGE
     charge = [x * p for x in dis]
     charge_node = []
     Max = GP.BATTERY_CAPACITY_OF_DELIVERY

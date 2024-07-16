@@ -20,9 +20,13 @@ def main(instance):
     print("DP 求解充电位置")
     charge_node = get_sol_charge(sol, instance)
     print("DP 求得的充电位置:", charge_node)
-    print("获得充电车代价", get_charge_route(charge_node, instance))
+    charge_cost, charge_route = get_charge_route(charge_node, instance)
+    print("获得充电车代价", charge_cost)
+    print("充电车路线", charge_route)
     end_time = time.perf_counter()
     print("运行时间", end_time - start_time)
+    # res = get_tot_cost(sol,charge_node)
+    return
 
 def evaluate(a, k, p):
     random.seed(k)
