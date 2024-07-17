@@ -15,11 +15,12 @@ def data_generate(k):
     random.seed(RANDOM_SEED + k)
 
     n = random.randint(RANDOM_N_L, RANDOM_N_R)
-    if k == 0:
-        n = 3
+    if k <= 3:
+        n = 6
+    else:
+        n = k
 
-    need = []
-    need.append(0)
+    need = [0]
     for num in range(n):
         cnt = random.randint(RANDOM_ORGAN_L, RANDOM_ORGAN_R)
         need.append(cnt)
@@ -47,6 +48,6 @@ def data_generate(k):
         writer.writerow(need)
         writer.writerows(distance)
 
-
-for i in range(1314, 1315):
-    data_generate(i)
+if __name__ == '__main__':
+    for i in range(0, 120):
+        data_generate(i)
