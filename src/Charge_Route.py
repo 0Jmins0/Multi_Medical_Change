@@ -21,6 +21,7 @@ def check(eages, instance):
     speed = GP.SPEED_OF_CHARGE
     tot_dis = 0
     for eage in sorted_eages:
+        # print(eage)
         u = eage[0][1]
         v = eage[1][1]
         time_u = eage[0][0]
@@ -37,8 +38,8 @@ def check(eages, instance):
             if dis <= acc_dis and charge_consume <= remain_charge:
                 ok = 1
                 if u != charge_sol[idx][-1]:
-                    charge_sol[idx].insert(len(charge_sol[idx]), u)
-                charge_sol[idx].insert(len(charge_sol[idx]), v)
+                    charge_sol[idx].append(u)
+                charge_sol[idx].append(v)
 
                 car_local[idx] = v
                 car_time[idx] = time_v
@@ -46,10 +47,10 @@ def check(eages, instance):
                 tot_dis += dis + instance['distance'][u][v]
                 break
         if ok == 0:
-            charge_route = [0, instance['n'] + 1]
+            charge_route = [0]
             if u != charge_route[-1]:
-                charge_route.insert(len(charge_route), u)
-            charge_route.insert(len(charge_route), v)
+                charge_route.append(u)
+            charge_route.append(v)
             charge_sol.append(charge_route)
             charge_consume = instance['distance'][u][v] * GP.DIS_TO_CHARGE
             car_local.append(v)
@@ -104,10 +105,11 @@ def get_charge_route(charge_node, instance):
     # print(charge_node)
     # flat_charge_node = [item for sublist1 in charge_node for sublist2 in sublist1 for item in sublist2]
     # sorted_list = sorted(flat_charge_node, key=lambda x: x[0][0])
+    # print("charge_node", charge_node)
     dfs(charge_node, instance, 0, [])
     # print("答案数量：", len(check_list))
     # print(check_list)
-    print("DFS")
-    print(charge_node)
-    print(ans_sol)
+    # print("DFS")
+    # print(charge_node)
+    # print(ans_sol)
     return ans_cost, ans_sol

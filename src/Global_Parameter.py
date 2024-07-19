@@ -11,7 +11,7 @@ SPEED_OF_DELIVERY = 1  # 送货车速度（时间 * 参数 = 距离）
 COST_OF_DELIVERY = 100  # 送货车使用代价
 
 BATTERY_CAPACITY_OF_CHARGE = 1000  # 充电车电池容量
-SPEED_OF_CHARGE = 1  # 充电车速度
+SPEED_OF_CHARGE = 3  # 充电车速度
 COST_OF_CHARGE = 1000  # 充电车使用代价
 
 REMOVE_POOL = [1, 2, 3, 4, 5]  # 删除操作池
@@ -34,6 +34,9 @@ RANDOM_ORGAN_R = 4
 
 RANDOM_DIS_L = 10  # 任意两点距离
 RANDOM_DIS_R = 100
+
+
+OUTPUT_FILE = '../exp/output.csv'
 
 
 # import Global_Parameter as GP

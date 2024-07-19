@@ -368,7 +368,9 @@ def LNS(instance):
     current_deliver_sol, current_charge_sol, current_deliver_cost, current_tot_cost = \
         init_deliver_sol, init_charge_sol, init_deliver_cost, init_tot_cost
 
-    while Terminal < MaxI and NonImp <= 30:
+    best_T = 0
+
+    while Terminal < MaxI and NonImp <= n * 1.5:
         removal_id = random.choice(REMOVE_POOL)
         insert_id = random.choice(INSERT_POOL)
         new_deliver_sol, new_deliver_cost = distroy_and_repair(current_deliver_sol, removal_id, insert_id, instance)
@@ -378,11 +380,17 @@ def LNS(instance):
 
         T *= q
 
-        new_charge_node = DP.get_sol_charge(current_deliver_sol, instance)
+        if new_deliver_cost > best_deliver_cost + GP.COST_OF_CHARGE:
+            NonImp += 1
+            # print("skip")
+            continue
+
+        new_charge_node = DP.get_sol_charge(new_deliver_sol, instance)
         new_charge_cost, new_charge_sol = get_charge_route(new_charge_node, instance)
         new_tot_cost = FC.get_total_cost(new_deliver_sol, new_charge_sol, instance)
         # print("charge")
-        # print(new_charge_node)
+        # print(new_deliver_sol)
+        # # print(new_charge_node)
         # print(new_charge_sol)
 
         diff = new_tot_cost - current_tot_cost
@@ -400,20 +408,22 @@ def LNS(instance):
                 current_tot_cost = new_tot_cost
 
 
-        print("T:", Terminal)
-        print(current_deliver_cost, current_deliver_sol)
-        print(current_tot_cost, current_charge_sol)
+        # print("T:", Terminal)
+        # print(current_deliver_cost, current_deliver_sol)
+        # print(current_tot_cost, current_charge_sol)
         if current_tot_cost < best_tot_cost:
             best_deliver_sol, best_charge_sol, best_deliver_cost, best_tot_cost = \
                 current_deliver_sol, current_charge_sol, current_deliver_cost, current_tot_cost
             NonImp = 1
+            best_T = Terminal
         else:
             NonImp += 1
         Terminal += 1
-    print("结果为", Terminal)
+    print("结果为")
     print("送货车路线：", best_deliver_sol)
     print("充电车路线：", best_charge_sol)
     print("total_cost", best_tot_cost)
+    print("最佳答案轮数", best_T)
 
 
-    return best_deliver_sol, best_deliver_cost
+    return best_deliver_sol, best_deliver_cost, best_charge_sol, best_tot_cost, best_T, Terminal

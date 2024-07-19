@@ -13,26 +13,11 @@ import Function as F
 
 def main(instance):
     start_time = time.perf_counter()
-    # print(initcl(instance))
-    # print(instance)
-    print("LNS求解送货车路线")
-    sol, cost = LNS(instance)
-    # print("LNS 求得的sol", cost, sol)
-    # print("DP 求解充电位置")
-    # charge_node = get_sol_charge(sol, instance)
-    # print("DP 求得的充电位置:", charge_node)
-    # charge_cost, charge_route = get_charge_route(charge_node, instance)
-    # print("获得充电车代价", charge_cost)
-    # print("充电车路线", charge_route)
+    best_deliver_sol, best_deliver_cost, best_charge_sol, best_tot_cost, best_T, Terminal = LNS(instance)
     end_time = time.perf_counter()
-    print("运行时间", end_time - start_time)
-    # # res = get_tot_cost(sol,charge_node)
-    # total_cost = F.get_total_cost(sol, charge_route, instance)
-    # print("结果：")
-    # print("送货车路线：", sol)
-    # print("充电车路线：", charge_route)
-    # print("total_cost", total_cost)
-    return sol, cost
+    run_time = end_time - start_time
+    print("运行时间", run_time)
+    return best_deliver_sol, best_deliver_cost, best_charge_sol, best_tot_cost, best_T, run_time, Terminal
 
 def evaluate(a, k, p):
     random.seed(k)
@@ -44,6 +29,7 @@ def evaluate(a, k, p):
     if p == 2:
         instance = read_data_random(a)
     # print(instance)
-    return main(instance)
+    best_deliver_sol, best_deliver_cost, best_charge_sol, best_tot_cost, best_T, run_time, Terminal= main(instance)
+    return best_deliver_sol, best_deliver_cost, best_charge_sol, best_tot_cost, best_T, run_time, instance, Terminal
     # {'n': 6, 'need': [0, 1, 1, 4, 3, 2, 2, 0], 'distance': [[0, 598, 493, 480, 607, 607, 480, 0], [601, 0, 109, 124, 131, 131, 124, 601], [496, 118, 0, 17, 180, 180, 17, 496], [489, 129, 22, 0, 172, 172, 0, 489], [616, 137, 178, 173, 0, 0, 173, 616], [616, 137, 178, 173, 0, 0, 173, 616], [489, 129, 22, 0, 172, 172, 0, 489], [0, 598, 493, 480, 607, 607, 480, 0]]}
     # {'n': 3, 'need': [['1', '1'], ['2', '1'], ['3', '1']], 'distence': [['0', '19', '2', '3', '0'], ['19', '0', '4', '12', '19'], ['2', '4', '0', '8', '2'], ['3', '12', '8', '0', '3'], ['0', '19', '2', '3', '0']]}
