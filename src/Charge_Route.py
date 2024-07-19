@@ -13,7 +13,7 @@ def check(eages, instance):
     sorted_eages = sorted(eages, key=lambda x: (x[0][0], x[1][0]))
     # print("sorted:", sorted_eages)
     charge_sol = []
-    init_charge_route = [0, instance['n'] + 1]
+    init_charge_route = [0]
     charge_sol.append(init_charge_route)
     car_local = [0]  # 路线0的充电车目前的终点为 0
     car_time = [0]  # 路线0的充电车可以结束当前路线的时间
@@ -30,16 +30,15 @@ def check(eages, instance):
             now_time = car_time[idx]
             now_local = car_local[idx]
             dis = instance['distance'][now_local][u]
-            charge_consume = instance['distance'][u][v] * GP.DIS_TO_CHARGE
+            charge_consume = instance['distance'][u][v] * GP.DIS_TO_CHARGE ## + instance['distance'][now_local][u] * GP.DIS_TO_CONSUME_OF_CHARGE
             remain_charge = car_battery[idx]
             acc_time = time_u - now_time
             acc_dis = acc_time * speed
             if dis <= acc_dis and charge_consume <= remain_charge:
                 ok = 1
-                if u != charge_sol[idx][-2]:
-                    charge_sol[idx].insert(len(charge_sol[idx]) - 1, u)
-                if v != charge_sol[idx][-1]:
-                    charge_sol[idx].insert(len(charge_sol[idx]) - 1, v)
+                if u != charge_sol[idx][-1]:
+                    charge_sol[idx].insert(len(charge_sol[idx]), u)
+                charge_sol[idx].insert(len(charge_sol[idx]), v)
 
                 car_local[idx] = v
                 car_time[idx] = time_v
@@ -48,16 +47,14 @@ def check(eages, instance):
                 break
         if ok == 0:
             charge_route = [0, instance['n'] + 1]
-            if u != charge_route[-2]:
-                charge_route.insert(len(charge_route) - 1, u)
-            if v != charge_route[-1]:
-                charge_route.insert(len(charge_route) - 1, v)
+            if u != charge_route[-1]:
+                charge_route.insert(len(charge_route), u)
+            charge_route.insert(len(charge_route), v)
             charge_sol.append(charge_route)
             charge_consume = instance['distance'][u][v] * GP.DIS_TO_CHARGE
             car_local.append(v)
             car_time.append(time_v)
             car_battery.append(GP.BATTERY_CAPACITY_OF_CHARGE - charge_consume)
-
     return len(charge_sol) * GP.COST_OF_CHARGE, tot_dis, charge_sol
 
 
@@ -70,12 +67,12 @@ def dfs(charge_node, instance, pos, eage):
         if len(eage) != 0:
             # check_list.append(copy.deepcopy(eage))
             tmp_cost, tmp_dis, tmp_sol = check(eage, instance)
-            print("tmp", tmp_cost, tmp_sol)
-            if tmp_cost == ans_cost and tmp_dis < ans_dis :
+            # print("tmp", tmp_cost, tmp_sol)
+            if tmp_cost == ans_cost and tmp_dis < ans_dis:
                 ans_sol = tmp_sol
                 ans_dis = tmp_dis
 
-            if (tmp_cost < ans_cost):
+            if tmp_cost < ans_cost:
                 ans_cost = tmp_cost
                 ans_sol = copy.deepcopy(tmp_sol)
                 ans_dis = tmp_dis
@@ -103,11 +100,14 @@ def get_charge_route(charge_node, instance):
     ans_dis = 10000000
     ans_sol = []
     vis = [[0 for i in range(10000)] for j in range(10000)]
-    print("get_charge_route")
-    print(charge_node)
+    # print("get_charge_route")
+    # print(charge_node)
     # flat_charge_node = [item for sublist1 in charge_node for sublist2 in sublist1 for item in sublist2]
     # sorted_list = sorted(flat_charge_node, key=lambda x: x[0][0])
     dfs(charge_node, instance, 0, [])
     # print("答案数量：", len(check_list))
     # print(check_list)
+    print("DFS")
+    print(charge_node)
+    print(ans_sol)
     return ans_cost, ans_sol

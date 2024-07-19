@@ -3,8 +3,8 @@ import Global_Parameter as GP
 DIS_TO_COST = GP.DIS_TO_COST  # 送货车距离和代价的关系系数，距离 * 系数 = 代价
 DIS_TO_CHARGE = GP.DIS_TO_CHARGE  # 距离和充电量的关系系数
 DIS_TO_CONSUME_OF_DELIVERY = GP.DIS_TO_CONSUME_OF_DELIVERY  # 运输车辆距离和耗电量的关系系数
-DIS_TO_CONSUME_OF_CHARGE = GP.DIS_TO_CONSUME_OF_CHARGE  # 充电车距离和耗电量的关系系数
-CHARGE_TO_COST = GP.CHARGE_TO_COST  # 消耗的电量和花费的关系系数，电量 * 系数 = 代价
+# DIS_TO_CONSUME_OF_CHARGE = GP.DIS_TO_CONSUME_OF_CHARGE  # 充电车距离和耗电量的关系系数
+# CHARGE_TO_COST = GP.CHARGE_TO_COST  # 消耗的电量和花费的关系系数，电量 * 系数 = 代价
 
 BATTERY_CAPACITY_OF_DELIVERY = GP.BATTERY_CAPACITY_OF_DELIVERY  # 送货车电池容量
 ORGAN_CAPACITY_OF_DELIVERY = GP.ORGAN_CAPACITY_OF_DELIVERY  # 送货车器官容量
@@ -21,7 +21,7 @@ def get_route_cost(route, instance):
     for i in range(1, len(route)):
         dis += instance['distance'][route[i - 1]][route[i]]
     route_charge = dis * DIS_TO_CONSUME_OF_DELIVERY
-    route_cost = route_charge * CHARGE_TO_COST
+    route_cost = dis * DIS_TO_COST
     return route_cost
 
 
@@ -31,6 +31,13 @@ def get_sol_cost(sol, instance):
         # print(route)
         cost += get_route_cost(route, instance) + COST_OF_DELIVERY
     return cost
+
+
+def get_total_cost(deliver_sol, charge_sol, instance):
+    tot_cost = 0
+    tot_cost += get_sol_cost(deliver_sol, instance)
+    tot_cost += len(charge_sol) * COST_OF_CHARGE
+    return tot_cost
 
 
 def insert_node_to_route(node, route, instance):
@@ -67,7 +74,6 @@ def get_init_sol(instance):
             if tmp_cost == -1 or tmp_pos == -1:
                 continue
             if tmp_cost < cost:
-
                 cost = tmp_cost
                 pos = tmp_pos
                 route_index = index
@@ -115,3 +121,6 @@ def check_route(route, instance):
         return True
     else:
         return False
+
+
+

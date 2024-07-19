@@ -92,30 +92,34 @@ def get_sol_charge(sol, instance):
         for i in range(len(route) - 1, 0, -1):
             f.append(charge)
             dis.append(instance['distance'][route[i - 1]][route[i]])
-            charge += dis[-1] * GP.DIS_TO_CHARGE
+            charge += dis[-1] * GP.DIS_TO_CONSUME_OF_DELIVERY
         f.append(charge)
         f.reverse()
         dis.append(0)
         dis.reverse()
+        if(f[0] <= GP.BATTERY_CAPACITY_OF_DELIVERY):
+            continue
         tt = 0
         Time = []  # 送货车到达点i的时间
         for dd in dis:
             tt += round(dd / GP.SPEED_OF_DELIVERY)
             Time.append(tt)
         time_list.append(Time)
-        # print("route", route)
-        # print("Time,f,dis", Time, f, dis)
+        print("route", route)
+        print("Time,f,dis", Time, f, dis)
         charge_node = get_charge_node(f, dis)
-        # print("after_get", charge_node)
+        print("after_get", charge_node)
         charge_node = remove_dup(charge_node)
-        # print("after_remove", charge_node)
+        print("after_remove", charge_node)
         charge_node = [get_binary(x) for x in charge_node]
-        # print("after_bin", charge_node)
+        print("after_bin", charge_node)
         charge_node = auto_completion(charge_node, route)
-        # print("after_com", charge_node)
+        print("after_com", charge_node)
         charge_node = get_time_node(charge_node, route, Time)
+        print("after_time", charge_node)
         charge_list.append(charge_node)
-
+    print("DP")
+    print(charge_list)
     return charge_list
 
 # p = 3  # 充电相当与耗电量的系数(耗电1，充电p)

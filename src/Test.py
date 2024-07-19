@@ -8,6 +8,7 @@ from DP import get_sol_charge
 from clinitial import initcl
 from Charge_Route import get_charge_route
 from Force import get_sol_charge_force
+import Function as F
 
 
 def main(instance):
@@ -16,17 +17,22 @@ def main(instance):
     # print(instance)
     print("LNS求解送货车路线")
     sol, cost = LNS(instance)
-    print("LNS 求得的sol", cost, sol)
-    print("DP 求解充电位置")
-    charge_node = get_sol_charge(sol, instance)
-    print("DP 求得的充电位置:", charge_node)
-    charge_cost, charge_route = get_charge_route(charge_node, instance)
-    print("获得充电车代价", charge_cost)
-    print("充电车路线", charge_route)
+    # print("LNS 求得的sol", cost, sol)
+    # print("DP 求解充电位置")
+    # charge_node = get_sol_charge(sol, instance)
+    # print("DP 求得的充电位置:", charge_node)
+    # charge_cost, charge_route = get_charge_route(charge_node, instance)
+    # print("获得充电车代价", charge_cost)
+    # print("充电车路线", charge_route)
     end_time = time.perf_counter()
     print("运行时间", end_time - start_time)
-    # res = get_tot_cost(sol,charge_node)
-    return
+    # # res = get_tot_cost(sol,charge_node)
+    # total_cost = F.get_total_cost(sol, charge_route, instance)
+    # print("结果：")
+    # print("送货车路线：", sol)
+    # print("充电车路线：", charge_route)
+    # print("total_cost", total_cost)
+    return sol, cost
 
 def evaluate(a, k, p):
     random.seed(k)

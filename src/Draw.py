@@ -118,3 +118,6 @@ def ddd():
     # 展示图表
     plt.show()
 
+
+
+def draw_sol(sol, instance):

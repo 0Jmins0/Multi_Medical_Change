@@ -7,6 +7,8 @@ import Global_Parameter as GP
 from Local_Search import LS
 import Function as FC
 from clinitial import initcl
+import DP
+from Charge_Route import get_charge_route
 
 
 REMOVE_POOL = GP.REMOVE_POOL
@@ -281,6 +283,73 @@ def distroy_and_repair(current_sol, removal_id, insert_id, instance):
     #     print(f"From Distroy_and_Repair get an error: {e}")
 
 
+# def LNS(instance):
+#     global NonImp, T0, q
+#
+#     Terminal = 0  # 迭代次数
+#     NonImp = 1
+#     n = instance['n']
+#
+#     T = T0
+#     init_sol, init_cost = FC.get_init_sol(instance)
+#     best_sol, best_cost = init_sol, init_cost
+#     current_sol, current_cost = init_sol, init_cost
+#
+#     init_charge_node = DP.get_sol_charge(current_sol, instance)
+#     init_charge_cost, init_charge_route = get_charge_route(init_charge_node, instance)
+#     init_tot_cost = FC.get_total_cost(current_sol, init_charge_route, instance)
+#
+#
+#
+#     print("初始化cost",  init_cost)
+#     # print("初始化sol", init_sol)
+#
+#     print("迭代退火")
+#
+#     # new_sol, new_cost = LS(init_sol, instance)
+#     #
+#     # print("sdfsadfsdfsdfsdf")
+#     # print(new_cost)
+#
+#     while Terminal < MaxI and NonImp <= n:
+#         removal_id = random.choice(REMOVE_POOL)
+#         insert_id = random.choice(INSERT_POOL)
+#         new_sol, new_cost = distroy_and_repair(current_sol, removal_id, insert_id, instance)
+#
+#         if new_cost < best_cost:
+#             print("pre_LS", new_cost)
+#             new_sol, new_cost = LS(new_sol, instance)
+#             print("after_LS", new_cost)
+#
+#         T *= q
+#
+#         diff = new_cost - current_cost
+#         if diff < 0:
+#             current_sol = new_sol
+#             current_cost = new_cost
+#         else:
+#             r = random.random()
+#             # print(diff)
+#             if T >= 0.01 and math.exp((diff) / (100000 * T)) >= r:
+#                 # print("acc")
+#                 current_sol = new_sol
+#                 current_cost = new_cost
+#
+#         if current_cost < best_cost:
+#             best_sol = current_sol
+#             best_cost = current_cost
+#             NonImp = 1  # 连续没有提升的次数归零
+#         else:
+#             NonImp += 1
+#         Terminal += 1
+#         if(Terminal % 10 == 0):
+#             print(Terminal, "cur:", current_cost, "best:", best_cost)
+#
+#     print("After LNS:best_sol,best_cost", len(best_sol), best_cost)
+#
+#     return best_sol, best_cost
+
+
 def LNS(instance):
     global NonImp, T0, q
 
@@ -289,53 +358,62 @@ def LNS(instance):
     n = instance['n']
 
     T = T0
-    init_sol, init_cost = FC.get_init_sol(instance)
-    best_sol, best_cost = init_sol, init_cost
-    current_sol, current_cost = init_sol, init_cost
-    print("初始化cost",  init_cost)
-    # print("初始化sol", init_sol)
+    init_deliver_sol, init_deliver_cost = FC.get_init_sol(instance)
+    init_charge_node = DP.get_sol_charge(init_deliver_sol, instance)
+    init_charge_cost, init_charge_sol = get_charge_route(init_charge_node, instance)
+    init_tot_cost = FC.get_total_cost(init_deliver_sol, init_charge_sol, instance)
 
-    print("迭代退火")
+    best_deliver_sol, best_charge_sol, best_deliver_cost, best_tot_cost = \
+        init_deliver_sol, init_charge_sol, init_deliver_cost, init_tot_cost
+    current_deliver_sol, current_charge_sol, current_deliver_cost, current_tot_cost = \
+        init_deliver_sol, init_charge_sol, init_deliver_cost, init_tot_cost
 
-    # new_sol, new_cost = LS(init_sol, instance)
-    #
-    # print("sdfsadfsdfsdfsdf")
-    # print(new_cost)
-
-    while Terminal < MaxI and NonImp <= n:
+    while Terminal < MaxI and NonImp <= 30:
         removal_id = random.choice(REMOVE_POOL)
         insert_id = random.choice(INSERT_POOL)
-        new_sol, new_cost = distroy_and_repair(current_sol, removal_id, insert_id, instance)
+        new_deliver_sol, new_deliver_cost = distroy_and_repair(current_deliver_sol, removal_id, insert_id, instance)
 
-        if new_cost < best_cost:
-            print("pre_LS", new_cost)
-            new_sol, new_cost = LS(new_sol, instance)
-            print("after_LS", new_cost)
+        if new_deliver_cost < best_deliver_cost:
+            new_deliver_sol, new_deliver_cost = LS(new_deliver_sol, instance)
 
         T *= q
 
-        diff = new_cost - current_cost
+        new_charge_node = DP.get_sol_charge(current_deliver_sol, instance)
+        new_charge_cost, new_charge_sol = get_charge_route(new_charge_node, instance)
+        new_tot_cost = FC.get_total_cost(new_deliver_sol, new_charge_sol, instance)
+        # print("charge")
+        # print(new_charge_node)
+        # print(new_charge_sol)
+
+        diff = new_tot_cost - current_tot_cost
         if diff < 0:
-            current_sol = new_sol
-            current_cost = new_cost
+            current_deliver_sol = new_deliver_sol
+            current_deliver_cost = new_deliver_cost
+            current_charge_sol = new_charge_sol
+            current_tot_cost = new_tot_cost
         else:
             r = random.random()
-            # print(diff)
             if T >= 0.01 and math.exp((diff) / (100000 * T)) >= r:
-                # print("acc")
-                current_sol = new_sol
-                current_cost = new_cost
+                current_deliver_sol = new_deliver_sol
+                current_deliver_cost = new_deliver_cost
+                current_charge_sol = new_charge_sol
+                current_tot_cost = new_tot_cost
 
-        if current_cost < best_cost:
-            best_sol = current_sol
-            best_cost = current_cost
-            NonImp = 1  # 连续没有提升的次数归零
+
+        print("T:", Terminal)
+        print(current_deliver_cost, current_deliver_sol)
+        print(current_tot_cost, current_charge_sol)
+        if current_tot_cost < best_tot_cost:
+            best_deliver_sol, best_charge_sol, best_deliver_cost, best_tot_cost = \
+                current_deliver_sol, current_charge_sol, current_deliver_cost, current_tot_cost
+            NonImp = 1
         else:
             NonImp += 1
         Terminal += 1
-        if(Terminal % 10 == 0):
-            print(Terminal, "cur:", current_cost, "best:", best_cost)
+    print("结果为", Terminal)
+    print("送货车路线：", best_deliver_sol)
+    print("充电车路线：", best_charge_sol)
+    print("total_cost", best_tot_cost)
 
-    print("After LNS:best_sol,best_cost", len(best_sol), best_cost)
 
-    return best_sol, best_cost
+    return best_deliver_sol, best_deliver_cost
